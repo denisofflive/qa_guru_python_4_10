@@ -3,6 +3,7 @@ from demo_qa import registration_form
 def test_fill_fields(browser_setup):
     registration_page = registration_form.RegistrationPage()
 
+
     # WHEN
     registration_page.open()
     registration_page.fill_first_name('Denis')
@@ -13,7 +14,7 @@ def test_fill_fields(browser_setup):
     registration_page.type_phone('9776136677')
     registration_page.select_subjects('Maths')
     registration_page.select_hobbies('Music')
-    registration_page.upload_picture()
+    registration_page.upload_picture('picture.jpg')
     registration_page.fill_current_address('Moscow')
     registration_page.select_state('NCR')
     registration_page.select_city('Noida')
