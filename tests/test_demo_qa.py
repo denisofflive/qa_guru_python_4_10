@@ -1,37 +1,45 @@
 import allure
+from selene.support.shared import browser
 from demo_qa import registration_form
+from users.users import User, Subjects, Hobbies
+from utils import attach
 
 
+student = User(
+    first_name='Denis',
+    last_name="Denisov",
+    email='denisqaguru@gmail.com',
+    day_of_birth='15',
+    month_of_birth='March',
+    year_of_birth='1985',
+    gender='Male',
+    phone_number='9776136677',
+    subjects=[Subjects.maths.value, Subjects.biology.value],
+    hobbies=[Hobbies.Music.value, Hobbies.Sports.value],
+    name_picture='picture.jpg',
+    adress='Moscow',
+    state='NCR',
+    city='Noida',
+)
+
+
+@allure.title('Register user')
 def test_fill_fields(browser_setup):
+
     registration_page = registration_form.RegistrationPage()
 
-    registration_page.open('/automation-practice-form')
-
     # WHEN
-    registration_page.fill_first_name('Denis')
-    registration_page.fill_last_name('Denisov')
-    registration_page.fill_email('denisqaguru@gmail.com')
-    registration_page.fill_date_of_birth('15', 'March', '1985')
-    registration_page.gender('Male')
-    registration_page.type_phone('9776136677')
-    registration_page.select_subjects('Maths')
-    registration_page.select_hobbies('Music')
-    registration_page.upload_avatar('picture.jpg')
-    registration_page.fill_current_address('Moscow')
-    registration_page.select_state('NCR')
-    registration_page.select_city('Noida')
-    registration_page.submit()
-
+    with allure.step('Открываем страницу'):
+        registration_page.open()
+    with allure.step('Вводим данные пользователя'):
+        registration_page.register(student)
+    with allure.step('Кнопка Submit'):
+        registration_page.click_submit()
     # THEN
-    registration_page.assert_registred_user_info(
-        'Denis Denisov',
-        'denisqaguru@gmail.com',
-        'Male',
-        '9776136677',
-        '15 March,1985',
-        'Maths',
-        'Music',
-        'picture.jpg',
-        'Moscow',
-        'NCR Noida',
-    )
+    registration_page.assert_registred_user(student)
+
+    attach.add_html(browser)
+    attach.add_screenshot(browser)
+    attach.add_logs(browser)
+    attach.add_video(browser)
+
