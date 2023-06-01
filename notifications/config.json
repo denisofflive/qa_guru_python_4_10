@@ -1,0 +1,17 @@
+{
+  "base": {
+    "logo": "",
+    "project": "${JOB_BASE_NAME}",
+    "environment": "denisov",
+    "comment": "@denisov here some problems",
+    "reportLink": "${BUILD_URL}",
+    "language": "en",
+    "allureFolder": "allure-report/",
+    "enableChart": true
+  },
+  "telegram": {
+    "token": "5905678666:AAEl3AAwPhcgTalwG1UMOl127huaqRClJ5s",
+    "chat": "-1001863589604",
+    "replyTo": ""
+  }
+}

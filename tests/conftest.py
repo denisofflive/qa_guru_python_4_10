@@ -1,36 +1,37 @@
 import pytest
-from selene.support.shared import browser
-from selenium.webdriver.chrome.options import Options
+from selene import Browser, Config
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from utils.attach import add_logs, add_html, add_screenshot
 
 
-DEFAULT_BROWSER_VERSION = "100.0"
+def pytest_addoption(parser):
+    parser.addoption(
+        '--browser',
+        help='browser in which will be start tests',
+        choices=['firefox', 'chrome'],
+        default='chrome',
+    )
 
 
-@pytest.fixture(scope="function", autouse=True)
-def browser_setup():
-    browser.config.window_width = 1920
-    browser.config.window_height = 1080
-    browser.config.hold_browser_open = True
-    browser.config.base_url = 'https://demoqa.com'
-
+@pytest.fixture(scope='function')
+def browser_setup(request):
+    browser_name = request.config.getoption('--browser')
     options = Options()
     selenoid_capabilities = {
-        "browserName": "chrome",
+        "browserName": browser_name,
         "browserVersion": "100.0",
-        "selenoid:options": {
-            "enableVNC": True,
-            "enableVideo": True
-        }
+        "selenoid:options": {"enableVNC": True, "enableVideo": False},
     }
-
     options.capabilities.update(selenoid_capabilities)
     driver = webdriver.Remote(
         command_executor="https://user1:1234@selenoid.autotests.cloud/wd/hub",
-        options=options)
+        options=options,
+    )
+    browser = Browser(Config(driver))
 
-    browser.config.driver = driver
+    yield browser
 
-    yield
-
-    browser.quit()
+    add_html(browser)
+    add_screenshot(browser)
+    add_logs(browser)

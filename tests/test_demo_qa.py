@@ -1,8 +1,6 @@
 import allure
-from selene.support.shared import browser
 from demo_qa import registration_form
 from users.users import User, Subjects, Hobbies
-from utils import attach
 
 
 student = User(
@@ -25,21 +23,14 @@ student = User(
 
 @allure.title('Register user')
 def test_fill_fields(browser_setup):
-
-    registration_page = registration_form.RegistrationPage()
+    registration_page = registration_form.RegistrationPage(browser_setup)
 
     # WHEN
-    with allure.step('Открываем страницу'):
-        registration_page.open()
-    with allure.step('Вводим данные пользователя'):
+    with allure.step('Open the page'):
+        registration_page.open_page_autoform()
+    with allure.step('Filling user data'):
         registration_page.register(student)
-    with allure.step('Кнопка Submit'):
+    with allure.step('Submit'):
         registration_page.click_submit()
     # THEN
     registration_page.assert_registred_user(student)
-
-    attach.add_html(browser)
-    attach.add_screenshot(browser)
-    attach.add_logs(browser)
-    attach.add_video(browser)
-
